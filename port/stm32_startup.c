@@ -1,14 +1,14 @@
 #include <stdint.h>
+#include <assert.h>
 
 extern uint32_t _etext;
 extern uint32_t _sdata;
 extern uint32_t _edata;
 extern uint32_t _sbss;
 extern uint32_t _ebss;
-extern uint32_t _estack;
 extern uint32_t _load_addr_data;
 
-/*main should be called in the ResetHandler, so the prototype is required */
+/* main should be called in the ResetHandler, so the prototype is required */
 void main(void);
 /* Prototype for initialization of standard library */
 void __libc_init_array(void);
@@ -235,20 +235,23 @@ uint32_t vectors[] __attribute__((section(".isr_vector"))) = {
 
 void Reset_Handler(void)
 {
-    __asm volatile("ldr   r0, =_estack"); /* FIXME. Is it required ?*/
-    __asm volatile("mov   sp, r0");    /* set stack pointer */
     // copy .data to SRAM
     uint32_t data_size = (uint32_t)&_edata - (uint32_t)&_sdata;
-    uint8_t *pDst = &_sdata;
-    uint8_t *pSrc = &_load_addr_data;
-    for (uint32_t i = 0; i < data_size; i++)
+    assert(data_size % sizeof(uint32_t) == 0); /* size is multiple of 4 because section boundaries are aligned in the linker script */
+    
+    uint32_t *pDst = &_sdata;
+    uint32_t *pSrc = &_load_addr_data;
+    for (uint32_t i = 0; i < (data_size / sizeof(uint32_t)); i++)
         *pDst++ = *pSrc++;
     
     // init .bss section to 0 in SRAM
     uint32_t bss_size = (uint32_t)&_ebss - (uint32_t)&_sbss;
+    assert(bss_size % 4 == 0); /* size is multiple of 4 because section boundaries are aligned in the linker script */
+    
     pDst = &_sbss;
-    for (uint32_t i = 0; i < bss_size; i++)
+    for (uint32_t i = 0; i < (bss_size / sizeof(uint32_t)); i++)
         *pDst++ = 0;
+        
     // init standard library
     __libc_init_array();
     

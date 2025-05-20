@@ -2,10 +2,10 @@ ENTRY(Reset_Handler)
 /* r- readable only, x - executable */
 MEMORY
 {
-  FLASH (rwx):   ORIGIN = 0x08000000, LENGTH = 1024K
-  SRAM (rx): ORIGIN = 0x20000000, LENGTH = 256K
+  FLASH (rx):   ORIGIN = 0x08000000, LENGTH = 1024K
+  SRAM (rwx): ORIGIN = 0x20000000, LENGTH = 256K
 }
-_estack = ORIGIN(SRAM) + LENGTH(SRAM);
+
 SECTIONS
 {
 
@@ -25,14 +25,17 @@ SECTIONS
    
   .data :
   {
+    . = ALIGN(4);
     _sdata = .;
     *(.data)
+    *(.data.*)
     . = ALIGN(4);
     _edata = .;
   }> SRAM AT> FLASH
   
   .bss :
   {
+    . = ALIGN(4);
     _sbss = .;
     __bss_start__ = .;  /* this specific name required by nano C standard library */
     *(.bss)
@@ -41,7 +44,9 @@ SECTIONS
     . = ALIGN(4);
     _ebss = .;
     __bss_end__ = .; /* this specific name required by nano C standard library */
+    
+    end = .; /* this specific name required by nano C standard library. This is used for memory management function to locate end of heap */
+    __end__ = .; /* this specific name required by rdimon-nano C standard library. This is used for memory management function to locate end of heap */
   }> SRAM 
-  end = .; /* this specific name required by nano C standard library. This is used for memory management function to locate end of heap */
-  __end__ = .; /* this specific name required by rdimon-nano C standard library. This is used for memory management function to locate end of heap */
+
 }

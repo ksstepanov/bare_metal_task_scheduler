@@ -29,6 +29,7 @@ OBJS_PORT_ = $(patsubst $(PATH_SRC_PORT)%.c,$(PATHO)$(PATH_SRC_PORT)%.o,$(SRC_PO
 
 # ========================== Target build configuration: ==========================
 OPENOCD_SEMIHOSTING=1
+DEBUG_ENABLE=1
 
 CC=arm-none-eabi-gcc
 LINK=$(CC)
@@ -47,6 +48,9 @@ ifeq ($(OPENOCD_SEMIHOSTING),1)
     CFLAGS+="-DOPENOCD_SEMIHOSTING_ENABLED"
     # Remove syscalls from build, because 'rdimon' already contains their implementations
     OBJS_PORT=$(filter-out %syscalls.o, $(OBJS_PORT_))
+    ifeq ($(DEBUG_ENABLE),1)
+        CFLAGS+="-DDEBUG_ON"
+    endif
 else
     LDFLAGS+=--specs=nano.specs   # add C stdlib nano
     OBJS_PORT=$(OBJS_PORT_)

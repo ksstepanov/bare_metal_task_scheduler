@@ -17,6 +17,7 @@ void task_idle(void)
 
 /**
  * @brief User task handler. Can be populated with anything.
+ *	  Current example turns on and off a led with specific period. 
  */
 void task_1_handler(void)
 {
@@ -33,6 +34,7 @@ void task_1_handler(void)
 
 /**
  * @brief User task handler. Can be populated with anything.
+ *	  Current example turns on and off a led with specific period. 
  */
 void task_2_handler(void)
 {
@@ -49,6 +51,7 @@ void task_2_handler(void)
 
 /**
  * @brief User task handler. Can be populated with anything.
+ *	  Current example turns on and off a led with specific period. 
  */
 void task_3_handler(void)
 {
@@ -65,6 +68,7 @@ void task_3_handler(void)
 
 /**
  * @brief User task handler. Can be populated with anything.
+ *	  Current example turns on and off a led with specific period. 
  */
 void task_4_handler(void)
 {
